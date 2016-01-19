@@ -134,8 +134,6 @@ sub domain_edit {
   my $domain = $db->query('select * from domains where id = ?', $domain_id)->hash;
   my $soa = $db->query("select * from records where domain_id = ? and type='SOA'", $domain_id)->hash;
 
-  say Dumper($domain);
-  say Dumper($soa);
   $c->stash( domain => $domain, soa => $soa );
   $c->render;
 }
@@ -161,6 +159,7 @@ sub domain_update {
 
   $db->query('update domains set name = ? where id = ?', $p->{'nd-name'}, $domain_id);
   $c->helpers->hist($domain_id,'domain','Update domain');
+  $c->helpers->upgrade_serial($domain_id);
   $c->redirect_to("/domain/$domain_id/edit");
 }
 
@@ -205,6 +204,7 @@ sub record_create {
   $db->query("insert into records(domain_id, name, type, content, ttl, prio, created_at) values (?,?,?,?,?,?,?)", $domain_id, $p->{'nr-host'}, $p->{'nr-type'}, $p->{'nr-data'}, $p->{'nr-ttl'}, $prio, 'now()');
 
   $c->helpers->hist($domain_id,'domain',sprintf('Create record %s', $p->{'nr-host'}));
+  $c->helpers->upgrade_serial($domain_id);
   $c->redirect_to("/domain/$domain_id/record");
 }
 
@@ -217,6 +217,7 @@ sub record_delete {
 
   $db->query("delete from records where id = ?", $record_id);
   $c->helpers->hist($domain_id,'domain',sprintf('Delete record %s', $recordname));
+  $c->helpers->upgrade_serial($domain_id);
   $c->redirect_to("/domain/$domain_id/record");
 }
 
@@ -243,6 +244,7 @@ sub record_save {
   $db->query("update records set content = ?, ttl = ?, name = ?, prio = ? where id = ?", $p->{'nr-data'}, $p->{'nr-ttl'}, $p->{'nr-host'}, $prio, $record_id);
 
   $c->helpers->hist($domain_id,'domain',sprintf('Update record %s', $p->{'nr-host'}));
+  $c->helpers->upgrade_serial($domain_id);
   $c->redirect_to("/record/$record_id/edit");
 }
 
