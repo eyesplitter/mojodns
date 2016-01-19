@@ -1,0 +1,131 @@
+<section id="s-users" class="group">
+  <h1>Users</h1>
+  <hr />
+
+  <div id="s-user-create">
+    <div class="page-header">
+      <h3><ins>Create</ins> <small>new user</small></h3>
+    </div>
+  <form method="post" action="<%= url_for('create new user') %>" class="form-validate" autocomplete="off">
+    <div class="radio">
+      <label>
+        <input type="radio" name="nu-privelege" id="nu-privelege-owner" value="owner" checked>
+        Owner
+      </label>
+      &nbsp;
+      <label>
+        <input type="radio" name="nu-privelege" id="nu-privelege-admin" value="admin">
+        Admin
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="nu-name">User name</label>
+      <input type="text" id="nu-name" name="nu-name" class="form-control" placeholder="User name"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-stringlength="true"
+        data-bv-stringlength-min="4"
+        data-bv-stringlength-message="Username must be at least 4 characters long"
+        data-bv-remote="true"
+        data-bv-remote-message="Username already exist"
+        data-bv-remote-type="post"
+        data-bv-remote-url="<%= url_for('check username') %>"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="nu-repassword">Password</label>
+      <input type="password" id="nu-password" name="nu-password" class="form-control" placeholder="Password"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-stringlength="true"
+        data-bv-stringlength-min="4"
+        data-bv-stringlength-message="Username must be at least 4 characters long"
+        data-bv-different="true"
+        data-bv-different-field="nu-name"
+        data-bv-different-message="The username and password cannot be the same as each other"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="nu-password">Password again</label>
+      <input type="password" id="nu-repassword" name="nu-repassword" class="form-control" placeholder="Password again"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-identical="true"
+        data-bv-identical-field="nu-password"
+        data-bv-identical-message="The password and its confirm are not the same"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="nu-email">Email</label>
+      <input type="text" id="nu-email" name="nu-email" class="form-control" placeholder="E-mail"i
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-emailaddress="true"
+        data-bv-emailaddress-message="The value is not a valid email address"
+      >
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+      Create 
+    </button>
+  </form>
+
+  </div>
+
+  <div id="s-user-search">
+    <div class="page-header">
+      <h3><ins>Seacrh</ins> <small>users</small></h3>
+    </div>
+    <div class="form-group">
+      <select id="select2-user" class="form-control">
+      <option id="none"></option>
+      % foreach ( @{stash('users')}){
+      	<option value="<%= $_->{u_id} %>"><%= $_->{login} %></option>
+      % }
+      </select>
+    </div>
+
+    <div id="s-user-list">
+    <div class="page-header">
+      <h3><ins>List</ins> <small>users</small></h3>
+    </div>
+
+    % foreach ( @{stash('users')}){
+      <div class="domain-block" id="s-user-list-<%= $_->{u_id} %>">
+      <div class="row">
+        <div class="col-md-6">
+          <span class="text-primary">
+            <h4>
+              <a href="<%= url_for("/user/$_->{u_id}/edit") %>">
+                <%= $_->{login} %> 
+              </a>
+              <small><a href="mailto:<%= $_->{email} %>"><%= $_->{email} %></a></small>
+              % if ($_->{name} eq 'admin'){
+                <span class="label label-success"><%= $_->{name} %></span>
+              % }
+            </h4>
+          </span>
+        </div>
+        <div class="col-md-6 text-right">
+            <a class="btn btn-default" href="<%= url_for("/user/$_->{u_id}/edit") %>">
+              <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+              Edit
+            </a>
+            <!--<a class="btn btn-default" href="<%= url_for("/user/$_->{u_id}/history") %>">-->
+            <a class="btn btn-default" href="#" disabled="disabled">
+              <span class="glyphicon glyphicon-cd" aria-hidden="true"></span>
+              history 
+            </a>
+            % unless ($_->{name} eq 'admin'){
+            <a class="btn btn-danger" href="<%= url_for("/user/$_->{u_id}/delete") %>">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              Delete
+            </a>
+            % }
+        </div>
+      </div>
+      </div>
+    % }
+  </div>
+</section>

@@ -1,0 +1,40 @@
+% layout 'user';
+% title "$domain->{name} record";
+
+<div class="container footer-fix">
+  <div class="page-header">
+    <div class="row">
+    	<div class="col-md-9">
+        <h3>Access management <small><%= $domain->{name} %></small></h3>
+      </div>
+    	<div class="col-md-3">
+        <a href="<%= url_for("/dns#s-domain-list-$domain->{id}") %>" class="btn btn-default btn-lg btn-block">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          Back to domains list
+        </a> 
+      </div>
+    </div>
+  </div>
+  
+  <table class="table table-stripped">
+  % foreach (sort keys %{$users}){
+    <tr>
+    	<td><%= $users->{$_}->{name} %></td>
+    	<td>
+        % unless ($users->{$_}->{mgt}){
+          <a href="<%= url_for("/domain/$domain->{id}/priveleges/$_/access") %>" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Add manager
+          </a> 
+        % }else{
+          <a href="<%= url_for("/domain/$domain->{id}/priveleges/$_/access") %>" class="btn btn-warning">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            Discard manager
+          </a> 
+        % }
+      </td>
+    </tr>
+  % } 
+  </table>
+  
+</div>

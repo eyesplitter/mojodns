@@ -1,0 +1,189 @@
+% layout 'user';
+% title "$domain->{name} record";
+
+<div class="container footer-fix">
+  <div class="page-header">
+    <div class="row">
+    	<div class="col-md-9">
+        <h3>Domain <small><%= $domain->{name} %></small></h3>
+      </div>
+    	<div class="col-md-3">
+        <a href="<%= url_for("/dns#s-domain-list-$domain->{id}") %>" class="btn btn-default btn-lg btn-block">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          Back to domains list
+        </a> 
+      </div>
+    </div>
+  </div>
+
+  <table class="table table-bordered">
+    <tr>
+    	<th>Owner</th>
+      <td><%= $owner %></td>
+    </tr>
+    <tr>
+    	<th>ttl</th>
+      <td><%= $domain->{ttl} %></td>
+    </tr>
+    <tr>
+    	<th>master</th>
+      <td><%= $domain->{master}?$domain->{master}:'None' %></td>
+    </tr>
+    <tr>
+    	<th>created</th>
+      <td><%= make_my_date($domain->{created_at}) %></td>
+    </tr>
+  </table>
+
+  <div class="page-header">
+    <h3>SOA <small>Start Of Authority</small></h3>
+  </div>
+  
+  <table class="table table-bordered">
+    <tr>
+    	<th>Primary name server</th>
+    	<td><%= stash('soa')->[0] %></td>
+    </tr>
+    <tr>
+    	<th>Contact e-mail</th>
+    	<td>
+        <a href="mailto:<%= stash('soa')->[1] %>"><%= stash('soa')->[1] %></a>
+      </td>
+    </tr>
+    <tr>
+    	<th>Refresh</th>
+    	<td><%= stash('soa')->[3] %></td>
+    </tr>
+    <tr>
+    	<th>Retry</th>
+    	<td><%= stash('soa')->[4] %></td>
+    </tr>
+    <tr>
+    	<th>Expire</th>
+    	<td><%= stash('soa')->[5] %></td>
+    </tr>
+    <tr>
+    	<th>Minimum</th>
+    	<td><%= stash('soa')->[6] %></td>
+    </tr>
+  </table>
+  
+  <div class="page-header">
+    <div class="row">
+    <div class="col-md-10">
+      <h3>Records <small><%= $record?scalar(@{$record}):0 %> entries</small></h3>
+    </div>
+
+    <div class="col-md-2">
+      <button type="button" class="btn btn-primary btn-block btn-lg" data-toggle="modal" data-target="#newrecord">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        Record
+      </button>
+    </div>
+
+    </div>
+  </div>
+  
+  % if ($record){
+    <table class="table table-bordered table-striped">
+      <tr class="info">
+      	<th>Record</th>
+      	<th>Type</th>
+      	<th>TTL</th>
+        <th>Priority</th>
+        <th>Data</th>
+       	<th></th>
+      </tr>
+      % foreach ( sort { $a->{type} cmp $b->{type} } @{$record}){
+        % my $r_id = $_->{id};
+        <tr>
+          <td>
+            <%= $_->{name} %>
+          </td>
+          <td>
+            <%= $_->{type} %>
+          </td>
+          <td>
+            <%= $_->{ttl} %>
+          </td>
+          <td>
+            <%= $_->{prio} %>
+          </td>
+          <td class="break">
+            <%= $_->{content} %>
+          </td>
+          <td class="domain-control">
+            <a class="btn btn-default btn-xs" href="<%= url_for("/record/$r_id/edit") %>">
+              <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+            </a>
+            <a class="btn btn-danger btn-xs" href="<%= url_for("/record/$r_id/delete") %>">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            </a>
+          </td>
+        </tr>
+      % }
+    </table>
+  % }else{
+    <p class="text-muted">There is no entries yet.</p>
+  % }
+
+</div>
+
+<div class="modal fade" id="newrecord" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" action="<%= url_for('new record') %>" class="form-validate">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">New record for <%= $domain->{name} %></h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="nr-type">Type</label>
+            <select id="nr-type" name="nr-type" class="form-control">
+              % foreach (@$types){
+            	  <option value="<%= $_ %>"><%= $_ %></option>
+              % }
+            </select>
+          </div>       
+
+          <div class="form-group">
+            <label for="nr-host">Host</label>
+            <input type="text" id="nr-host" name="nr-host" class="form-control" placeholder="Host">
+          </div>       
+
+          <div class="form-group">
+            <label for="nr-ttl">TTL</label>
+            <input type="text" id="nr-ttl" name="nr-ttl" class="form-control" placeholder="TTL"
+              data-bv-notempty="true" data-bv-notempty-message="This field is required"
+              data-bv-integer="true" data-bv-integer-message="This value must be integer"
+            >
+          </div>       
+
+          <div class="form-group">
+            <label for="nr-data">Data</label>
+            <textarea rows="5" type="text" id="nr-data" name="nr-data" class="form-control" placeholder="Data"
+              data-bv-notempty="true" data-bv-notempty-message="This field is required"
+            ></textarea>
+          </div>       
+
+          <div class="form-group">
+            <label for="nr-prio">Priority (required for MX and and SRV)</label>
+            <input type="text" id="nr-prio" name="nr-prio" class="form-control" placeholder="Priority"
+              data-bv-integer="true" data-bv-integer-message="This value must be integer"
+            >
+          </div>   
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Create 
+          </button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

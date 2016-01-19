@@ -1,0 +1,1 @@
+html:before{background:#f00;color:#fff;font-size:14pt;position:fixed;padding:20px;z-index:9999;content:"AssetPack could not read /css/bootstrap-min.css: Asset /css/bootstrap-min.css could not be fetched: Not Found at /usr/lib/perl5/site_perl/5.12.4/Mojolicious/Plugin/AssetPack/Handler/Http.pm line 41.";}

@@ -1,0 +1,27 @@
+% layout 'user';
+% my $domain = stash('domain');
+% title "$domain->{name} edit";
+
+<div class="container footer-fix">
+  <h1><%= $domain->{name} %> <small>zone edit</small></h1>
+  <hr />
+  <form method="post" action="<%= url_for('update domain') %>" class="form-validate">
+    <div class="form-group">
+      <label for="nd-name">Domain name</label>
+      <input type="text" id="nd-name" name="nd-name" class="form-control" placeholder="Domain name"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-fv-integer="true"
+        data-fv-integer-message="The value is not an integer"
+        value="<%= $domain->{name} %>"
+      >
+    </div>
+    <button type="submit" class="btn btn-primary">
+      <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+      Save 
+    </button>
+    <a href="<%= url_for("/dns#s-domain-list-$domain->{id}") %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+      Back
+    </a>
+  </form>
+</div>

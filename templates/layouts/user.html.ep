@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    %= stylesheet '/css/my.css'
+    %= stylesheet '/css/bootstrap.min.css'
+    %= stylesheet 'css/bs.sidebar.css'
+    %= stylesheet '/css/select2.min.css'
+    %= javascript '/js/jquery-2.1.4.min.js'
+    %= javascript '/js/bootstrap.min.js'
+    %= javascript '/js/select2.full.min.js'
+    %= javascript '/js/bootstrapValidator.min.js'
+    %= javascript '/js/run.js'
+   </head>
+  <body>
+    %= include 'layouts/user_info'
+    <%= content %>
+
+    <section id="feedback" class="wm">
+      <div class="container text-center">
+      Feedback to
+      <a href="mailto:2yxa@aksinet.net">2yxa@aksinet.net</a>
+      </div>
+    </section>
+  </body>
+</html>

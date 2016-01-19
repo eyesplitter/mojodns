@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    %= stylesheet '/css/my.css'
+    %= stylesheet '/css/bootstrap.min.css'
+    %= stylesheet 'css/bs.sidebar.css'
+    %= stylesheet '/css/select2.min.css'
+    %= javascript '/js/jquery-2.1.4.min.js'
+    %= javascript '/js/bootstrap.min.js'
+    %= javascript '/js/select2.full.min.js'
+    %= javascript '/js/bootstrapValidator.min.js'
+    %= javascript '/js/run.js'
+   </head>
+  <body>
+    <%= content %>
+  </body>
+</html>

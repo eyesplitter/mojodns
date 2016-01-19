@@ -1,0 +1,30 @@
+<section id="s-search" class="group">
+  <h3>Search</h3>
+  <hr />
+  % if (stash('domain_group') and stash('users') ){ 
+  <div class="form-group">
+    <select type="text" id="i-search" class="form-control" aria-describedby="i-search-help">
+      <option id="none"></option>
+      % if (stash('domain_group')){
+        <optgroup label="Domains">
+          % foreach my $user ( sort keys %{stash('domain_group')}){
+            % foreach ( @{stash('domain_group')->{$user}}){
+            	<option value="s-domain-list-<%= $_->{id} %>"><%= $_->{name} %></option>
+            % }
+          % }
+        </optgroup>
+      % }
+      % if (stash('users')){
+        <optgroup label="Users">
+          % foreach ( @{stash('users')}){
+        	  <option value="s-user-list-<%= $_->{u_id} %>"><%= $_->{login} %></option>
+          % }
+        </optgroup>
+      % }
+    </select>
+    <span id="i-search-help" class="help-block">Live search for domains, users and other.</span>
+  </div>
+  % }else{
+    <p>Nothing to search.</p>
+  % }
+</section>

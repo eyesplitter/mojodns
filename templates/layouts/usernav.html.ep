@@ -1,0 +1,41 @@
+<nav class="bs-docs-sidebar">
+  <ul id="sidebar" class="nav nav-stacked fixed">
+    <li>
+      <a href="#s-search">Search</a>
+    </li>
+    <li>
+      <a href="#s-domains">Domains</a>
+      <ul class="nav nav-stacked">
+        <li>
+          <a href="#s-domain-create">Create</a>
+        </li>
+        <li>
+          <a href="#s-domain-search">Search</a>
+        </li>
+        <li>
+          <a href="#s-domain-list">List</a>
+        </li>
+      </ul>
+    </li>
+    % if (session('user')->{role_id} == 1){
+      <li>
+        <a href="#s-users">Users</a>
+        <ul class="nav nav-stacked">
+          <li>
+            <a href="#s-user-create">Create</a>
+          </li>
+          <li>
+           <a href="#s-user-search">Search</a>
+          </li>
+          <li>
+            <a href="#s-user-list">List</a>
+          </li>
+        </ul>
+      </li>
+    % }
+    <li class="divider"></li>
+    <li>
+      <a href="/logout" class="bs-docs-theme-toggle" role="button"> Logout </a>
+     </li>
+  </ul>
+</nav>

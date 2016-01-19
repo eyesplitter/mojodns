@@ -1,0 +1,89 @@
+% layout 'user';
+% my $user = stash('user');
+% title "$user->{login} edit";
+
+<div class="container footer-fix">
+
+  <div class="page-header">
+    <div class="row">
+  	  <div class="col-md-9">
+        <h1><%= $user->{login} %> <small>edit</small></h1>
+      </div>
+    	<div class="col-md-3">
+        <a href="<%= url_for("/dns#s-user-list-$user->{id}") %>" class="btn btn-default btn-lg btn-block">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          Back to users list
+        </a> 
+      </div>
+    </div>
+  </div>
+
+  <div class="page-header">
+    <h4>Personal information</h4>
+  </div>
+
+  
+  <form method="post" action="<%= url_for('update user') %>" class="form-validate" autocomplete="off">
+    <div class="radio">
+      <label>
+        <input type="radio" name="nu-privelege" id="nu-privelege-owner" value="owner" <%= $user->{role_id} > 1?'checked':'' %>>
+        Owner
+      </label>
+      &nbsp;
+      <label>
+        <input type="radio" name="nu-privelege" id="nu-privelege-admin" value="admin" <%= $user->{role_id} == 1?'checked':'' %>>
+        Admin
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="nu-email">User name</label>
+      <input type="text" id="nu-email" name="nu-email" class="form-control" placeholder="E-mail"i
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-emailaddress="true"
+        data-bv-emailaddress-message="The value is not a valid email address"
+        value="<%= $user->{email} %>"
+      >
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+      Save
+    </button>
+  </form>
+
+<div class="page-header">
+  <h4>Change password</h4>
+</div>
+
+  <form method="post" action="<%= url_for('update user') %>" class="form-validate" autocomplete="off">
+    <div class="form-group">
+      <label for="nu-repassword">Password</label>
+      <input type="password" id="nu-password" name="nu-password" class="form-control" placeholder="Password"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-stringlength="true"
+        data-bv-stringlength-min="4"
+        data-bv-stringlength-message="Username must be at least 4 characters long"
+        data-bv-different="true"
+        data-bv-different-field="nu-name"
+        data-bv-different-message="The username and password cannot be the same as each other"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="nu-password">Password again</label>
+      <input type="password" id="nu-repassword" name="nu-repassword" class="form-control" placeholder="Password again"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-identical="true"
+        data-bv-identical-field="nu-password"
+        data-bv-identical-message="The password and its confirm are not the same"
+      >
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+      Change password 
+    </button>
+  </form>
+
+</div>

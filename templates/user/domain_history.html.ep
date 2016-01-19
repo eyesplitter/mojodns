@@ -1,0 +1,39 @@
+% layout 'user';
+% my $domain = stash('domain');
+% title "$domain->{name} history";
+
+<div class="container footer-fix">
+  <div class="page-header">
+    <div class="row">
+    	<div class="col-md-9">
+        <h3><%= $domain->{name} %> <small>history</small></h3>
+      </div>
+    	<div class="col-md-3">
+        <a href="<%= url_for("/dns#s-domain-list-$domain->{id}") %>" class="btn btn-default btn-lg btn-block">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          Back to domains list
+        </a> 
+      </div>
+    </div>
+  </div>
+  <hr />
+  % if (scalar(@$history)){
+    <table class="table table-bordered">
+      <tr>
+      	<th>User</th>
+      	<th>Timestamp</th>
+      	<th>Action</th>
+      </tr>
+      % foreach ( @$history ){
+        <tr>
+        	<td><%= $_->{login} %></td>
+        	<td><%= make_my_time($_->{t}) %></td>
+        	<td><%= $_->{message} %></td>
+        </tr>
+      % }
+    </table>
+  % }else{
+    <p class="text-muted">Nothing here.</p>
+  % }
+
+</div>

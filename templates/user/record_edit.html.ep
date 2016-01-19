@@ -1,0 +1,53 @@
+% layout 'user';
+% title "$record->{name} edit";
+
+<div class="container footer-fix">
+  <div class="page-header">
+    <h3><%= $record->{type} %> Record <small><%= $record->{name} %></small></h3>
+  </div>
+
+  <form method="post" action="<%= url_for("/record/$record->{id}/save") %>" class="form-validate">
+    <div class="form-group">
+      <label for="nr-host">Host</label>
+      <input type="text" id="nr-host" name="nr-host" class="form-control" placeholder="Host"i
+        value="<%= $record->{name} %>"
+      >
+    </div>       
+
+    <div class="form-group">
+      <label for="nr-ttl">TTL</label>
+      <input type="text" id="nr-ttl" name="nr-ttl" class="form-control" placeholder="TTL"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-integer="true" data-bv-integer-message="This value must be integer"
+        value="<%= $record->{ttl} %>"
+      >
+    </div>       
+
+    <div class="form-group">
+      <label for="nr-data">Data</label>
+      <textarea rows="5" type="text" id="nr-data" name="nr-data" class="form-control" placeholder="Data"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+      ><%= $record->{content} %></textarea>
+    </div>       
+
+    % if ($record->{type} eq 'MX' or $record->{type} eq 'SRV'){
+      <div class="form-group">
+        <label for="nr-prio">Priority (required for MX and and SRV)</label>
+        <input type="text" id="nr-prio" name="nr-prio" class="form-control" placeholder="Priority"
+          data-bv-integer="true" data-bv-integer-message="This value must be integer"
+          value="<%= $record->{prio} %>"
+        >
+      </div>   
+    % }
+
+    <button type="submit" class="btn btn-primary">
+      <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+      save
+    </button>
+    <a href="<%= url_for("/domain/$record->{domain_id}/record") %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      Back to <%= $domain->{name} %> edit
+    </a> 
+  </form>
+
+</div>

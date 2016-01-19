@@ -1,0 +1,1 @@
+alert('AssetPack could not read /css/my.css: Asset /css/my.css could not be fetched: Not Found at /usr/lib/perl5/site_perl/5.12.4/Mojolicious/Plugin/AssetPack/Handler/Http.pm line 41.');console.log('AssetPack could not read /css/my.css: Asset /css/my.css could not be fetched: Not Found at /usr/lib/perl5/site_perl/5.12.4/Mojolicious/Plugin/AssetPack/Handler/Http.pm line 41.');

@@ -1,0 +1,163 @@
+<section id="s-domains" class="group">
+  <h1>Domains</h1>
+  <hr />
+
+  <div id="s-domain-create">
+    <div class="page-header">
+      <h3><ins>Create</ins> <small>new domain</small></h3>
+    </div>
+  <form method="post" action="<%= url_for('create new domain') %>" class="form-validate">
+    <div class="radio">
+      <label>
+        <input type="radio" name="nd-type" id="nd-type-master" value="master" checked>
+        Master
+      </label>
+      &nbsp;
+      <label>
+        <input type="radio" name="nd-type" id="nd-type-slave" value="slave">
+        Slave
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="nd-name">Domain name</label>
+      <input type="text" id="nd-name" name="nd-name" class="form-control" placeholder="Domain name"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-fv-integer="true"
+        data-fv-integer-message="The value is not an integer"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="nd-ns">Primary name server</label>
+      <input type="text" id="nd-ns" name="nd-ns" class="form-control" placeholder="Primary name server"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+      >
+    </div>
+    
+    <div class="form-group">
+      <label for="nd-contact">Contact email</label>
+      <input type="text" id="nd-contact" name="nd-contact" class="form-control" placeholder="Contact"
+        data-bv-notempty="true" data-bv-notempty-message="This field is required"
+        data-bv-emailaddress="true"
+        data-bv-emailaddress-message="The value is not a valid email address"
+      >
+    </div>
+
+    <div class="form-horizontal">
+      <div class="form-group">
+        <label class="col-md-1 control-label" for="nd-refresh">Refresh</label>
+        <div class="col-md-2">
+          <input type="text" id="nd-refresh" name="nd-refresh" class="form-control" placeholder="Refresh" value="3600"
+            data-bv-notempty="true" data-bv-notempty-message="This field is required"
+          >
+        </div>
+
+        <label class="col-md-1 control-label" for="nd-retry">Retry</label>
+        <div class="col-md-2">
+          <input type="text" id="nd-retry" name="nd-retry" class="form-control" placeholder="Retry" value="180"
+            data-bv-notempty="true" data-bv-notempty-message="This field is required"
+          >
+        </div>
+
+        <label class="col-md-1 control-label" for="nd-expire">Expire</label>
+        <div class="col-md-2">
+          <input type="text" id="nd-expire" name="nd-expire" class="form-control" placeholder="Expire" value="864000"
+            data-bv-notempty="true" data-bv-notempty-message="This field is required"
+          >
+        </div>
+          
+        <label class="col-md-1 control-label" for="nd-minimum">Minimum</label>
+        <div class="col-md-2">
+          <input type="text" id="nd-minimum" name="nd-minimum" class="form-control" placeholder="Minimum" value="1200"
+            data-bv-notempty="true" data-bv-notempty-message="This field is required"
+          >
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+      Create 
+    </button>
+  </form>
+  </div>
+
+
+  <div id="s-domain-search">
+    <div class="page-header">
+      <h3><ins>Seacrh</ins> <small>domains</small></h3>
+    </div>
+    % if (stash('domain_group')){
+    <div class="form-group">
+      <select id="select2-domain" class="form-control">
+      <option id="none"></option>
+      % foreach my $user ( sort keys %{stash('domain_group')}){
+        <optgroup label="<%= $user %>">
+          % foreach ( @{stash('domain_group')->{$user}}){
+          	<option value="<%= $_->{id} %>"><%= $_->{name} %></option>
+          % }
+        </optgroup>
+      % }
+      </select>
+    </div>
+    % }else{
+      <h3>
+        <span class="glyphicon glyphicon-warning-sign text-danger" aria-hidden="true"></span>
+        <small>You dont have any domains to search. Please create at least one.</small>
+      </h3>
+    % }
+  </div>
+
+
+  <div id="s-domain-list">
+    <div class="page-header">
+      <h3><ins>List</ins> <small>domains</small></h3>
+    </div>
+
+    % if (stash('domain_group')){
+    % foreach my $dname (keys %{stash('domains')}){
+      % my $domain = stash('domains')->{$dname};
+      <div class="domain-block" id="s-domain-list-<%= $domain->{id} %>">
+      <div class="row">
+        <div class="col-md-5">
+          <span class="text-primary">
+            <a href="<%= url_for("/domain/$domain->{id}/record") %>">
+              <h4><%= $dname %></h4>
+            </a>
+          </span>
+        </div>
+        <div class="col-md-7 text-right">
+            <a class="btn btn-default" href="<%= url_for("/domain/$domain->{id}/record") %>">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+              Record 
+            </a>
+            <a class="btn btn-default" href="<%= url_for("/domain/$domain->{id}/priveleges") %>">
+              <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+              Access 
+            </a>
+            <a class="btn btn-default" href="<%= url_for("/domain/$domain->{id}/edit") %>">
+              <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+              Edit
+            </a>
+            <a class="btn btn-default" href="<%= url_for("/domain/$domain->{id}/history") %>">
+              <span class="glyphicon glyphicon-cd" aria-hidden="true"></span>
+              history 
+            </a>
+            <a class="btn btn-danger" href="<%= url_for("/domain/$domain->{id}/delete") %>">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              Delete
+            </a>
+        </div>
+      </div>
+      </div>
+    % }
+    % }else{
+      <h3>
+        <span class="glyphicon glyphicon-warning-sign text-danger" aria-hidden="true"></span>
+        <small>You dont have any domains to manage. Please create at least one.</small>
+      </h3>
+    % }
+  </div>
+</section>
+<hr />

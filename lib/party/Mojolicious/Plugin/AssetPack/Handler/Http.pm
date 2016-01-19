@@ -1,0 +1,62 @@
+package Mojolicious::Plugin::AssetPack::Handler::Http;
+
+=head1 NAME
+
+Mojolicious::Plugin::AssetPack::Handler::Http - A URL handler for http:// assets
+
+=head1 DESCRIPTION
+
+L<Mojolicious::Plugin::AssetPack::Handler::Http> is a module that can
+fetch assets from the web.
+
+This class is EXPERIMENTAL.
+
+=cut
+
+use Mojo::Base -base;
+use Mojolicious::Types;
+use Mojolicious::Plugin::AssetPack::Asset;
+use constant DEBUG => $ENV{MOJO_ASSETPACK_DEBUG} || 0;
+
+=head1 ATTRIBUTES
+
+=head2 asset_for
+
+  $asset = $self->asset_for($url, $assetpack);
+
+This method tries to download the asset from the web.
+
+=cut
+
+sub asset_for {
+  my ($self, $url, $assetpack) = @_;
+  my $name = do { local $_ = "$url"; s![^\w-]!_!g; $_ };
+  my ($asset, $e, $tx, $ext);
+
+  # already downloaded
+  return $asset if $asset = $assetpack->_packed(qr{^$name\.\w+$});
+
+  $tx = $assetpack->_ua->get($url);
+  $ext = Mojolicious::Types->new->detect($tx->res->headers->content_type // 'text/plain');
+  die "Asset $url could not be fetched: $e->{message}" if $e = $tx->error;
+
+  $ext = $ext->[0] if ref $ext;
+  $ext = $tx->req->url->path =~ m!\.(\w+)$! ? $1 : 'txt' if !$ext or $ext eq 'bin';
+  $assetpack->_app->log->info("Asset $url was saved as $name.$ext");
+  $assetpack->_asset("$name.$ext")->spurt($tx->res->body);
+}
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2014, Jan Henning Thorsen
+
+This program is free software, you can redistribute it and/or modify it under
+the terms of the Artistic License version 2.0.
+
+=head1 AUTHOR
+
+Jan Henning Thorsen - C<jhthorsen@cpan.org>
+
+=cut
+
+1;
