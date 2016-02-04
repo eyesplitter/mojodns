@@ -159,6 +159,7 @@ sub domain_update {
 
   $db->query('update domains set name = ? where id = ?', $p->{'nd-name'}, $domain_id);
   $c->helpers->hist($domain_id,'domain','Update domain');
+  # serial
   $c->helpers->upgrade_serial($domain_id);
   $c->redirect_to("/domain/$domain_id/edit");
 }
