@@ -1,16 +1,17 @@
 % layout 'user';
-% title "$record->{name} edit";
+% my $record_unicode_name = to_unicode($record->{name});
+% title "$record_unicode_name edit";
 
 <div class="container footer-fix">
   <div class="page-header">
-    <h3><%= $record->{type} %> Record <small><%= $record->{name} %></small></h3>
+    <h3><%= $record->{type} %> Record <small><%= $record_unicode_name %></small></h3>
   </div>
 
   <form method="post" action="<%= url_for("/record/$record->{id}/save") %>" class="form-validate">
     <div class="form-group">
       <label for="nr-host">Host</label>
       <input type="text" id="nr-host" name="nr-host" class="form-control" placeholder="Host"i
-        value="<%= $record->{name} %>"
+        value="<%= $record_unicode_name %>"
       >
     </div>       
 
@@ -46,7 +47,7 @@
     </button>
     <a href="<%= url_for("/domain/$record->{domain_id}/record") %>" class="btn btn-default">
       <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-      Back to <%= $domain->{name} %> edit
+      Back to <%= $record_unicode_name %> edit
     </a> 
   </form>
 

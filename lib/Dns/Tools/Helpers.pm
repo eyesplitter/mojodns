@@ -7,6 +7,7 @@ use base 'Mojolicious::Plugin';
 use Mojo::Base 'Mojolicious';
 use Data::Dumper qw( Dumper );
 use Mojo::JSON qw(decode_json encode_json);
+use Net::IDN::Encode ':all';
 
 sub register {
   my ($c, $app) = @_;
@@ -109,6 +110,25 @@ sub register {
     $parts[2] = sprintf("%s%02d",$serial_date, $number);
     $c->app->pg->db->query("update records set content = ? where id = ?", join(' ', @parts), $soa->{id});
     return 1;
+  });
+
+  $app->helper( rename => sub {
+    my ( $c, $record, $domain ) = @_;
+    return '@' if ($record eq $domain);
+    $record =~ /^(\S+)\.$domain$/;
+    return domain_to_unicode($1);
+  });
+
+  $app->helper( to_unicode => sub {
+    my ( $c, $data ) = @_;
+    $data = domain_to_unicode($data) if ($data =~/xn--.+/i);
+    return $data;
+  });
+
+  $app->helper( to_ascii => sub {
+    my ( $c, $data ) = @_;
+    $data = domain_to_ascii($data);
+    return $data;
   });
 
 }
