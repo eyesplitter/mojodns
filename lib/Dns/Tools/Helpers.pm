@@ -79,18 +79,33 @@ sub register {
     my ($c, $domain_id) = @_;
     my $soa = $c->app->pg->db->query("select id,content from records where domain_id = ? and type = 'SOA'", $domain_id)->hash;
     my @parts = split(' ', $soa->{content});
+
+    my (undef,undef,undef,$mday,$mon,$year,undef,undef,undef) = localtime();
+    my $current_date = sprintf("%04d%02d%02d", $year+1900, $mon+1, $mday);
+
+    if ($current_date*100 < $parts[2]){
+      $parts[2] += 1;
+      $c->app->pg->db->query("update records set content = ? where id = ?", join(' ', @parts), $soa->{id});
+      return 1;
+    }
+
     my $serial = $parts[2];
+
+    unless ($serial =~/^\d{10}$/){
+      $parts[2] = sprintf("%s%02d",$current_date, 00);
+      $c->app->pg->db->query("update records set content = ? where id = ?", join(' ', @parts), $soa->{id});
+      return 1;
+    }
+
     my $number = substr $serial, 8, 2;
     my $serial_date = substr $serial, 0, 8; 
     $number += 1;
-    
-    my (undef,undef,undef,$mday,$mon,$year,undef,undef,undef) = localtime();
-    my $current_date = sprintf("%04d%02d%02d", $year+1900, $mon+1, $mday);
 
     if ($serial_date ne $current_date){
       $serial_date = $current_date;
       $number = sprintf("00");
     }
+
     $parts[2] = sprintf("%s%02d",$serial_date, $number);
     $c->app->pg->db->query("update records set content = ? where id = ?", join(' ', @parts), $soa->{id});
     return 1;
