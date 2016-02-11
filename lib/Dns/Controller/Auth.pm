@@ -33,11 +33,9 @@ sub check_owner {
   if ($c->req->url->path->parts->[0] eq 'record') {
     my $record_id = $c->req->url->path->parts->[1] if ($c->req->url->path->parts->[1]);
     $domain_id = $db->query("select domain_id from records where id = ?", $record_id)->hash->{domain_id} if($record_id);
-    say $domain_id;
   }
 
   unless($domain_id){
-    say 'no domain_id'; 
     $c->res->code(404); 
     $c->res->message('Not Found');  
     $c->render(text => '404');
@@ -49,7 +47,6 @@ sub check_owner {
   foreach ( @{$access_to}){
     return 1 if ($_->{domain_id} == $domain_id);
   }
-  say 'no one';
   $c->res->code(404); 
   $c->res->message('Not Found');  
   $c->render(text => '404');
