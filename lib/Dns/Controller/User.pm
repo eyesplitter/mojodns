@@ -69,7 +69,10 @@ sub user_edit {
   my $db = $c->app->pg->db;
   my $user_id = $c->stash->{user_id};
   my $user = $db->query("select u.*, ru.role_id from users u left join roles_users ru on u.id = ru.user_id where id = ?", $user_id)->hash;
-  $c->stash(user => $user);
+  my $access->{editor} = $db->query("select * from user_access ua left join domains d on ua.domain_id = d.id where ua.user_id = ?", $user_id)->hashes->to_array;
+  $access->{owner} = $db->query("select * from domains where user_id = ?", $user_id)->hashes->to_array;
+  say Dumper($access);
+  $c->stash(user => $user, access => $access);
   $c->render;
 }
 

@@ -86,4 +86,50 @@
     </button>
   </form>
 
+  % use Net::IDN::Encode ':all';
+
+  <div class="page-header">
+    <h4>Access to</h4>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">Owner access</div>
+        <div class="panel-body">
+          % foreach (@{$access->{owner}}) {
+            <div class="clearfix">
+              <div class="pull-left">
+                <a href="<%= url_for("/domain/$_->{id}/record") %>"><%= ($_->{name} =~/xn--.+/i)?domain_to_unicode($_->{name}):$_->{name} %></a>
+              </div>
+              <div class="pull-right">
+                <a href="<%= url_for("/domain/$_->{id}/record") %>" class="btn btn-default">domain records</a>
+                <a href="<%= url_for("/domain/$_->{id}/priveleges") %>" class="btn btn-default">domain access</a>
+                <a href="<%= url_for("/domain/$_->{id}/history") %>" class="btn btn-default">domain history</a>
+              </div>
+            </div>
+          % }
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="panel panel-primary">
+        <div class="panel-heading">Editor access</div>
+        <div class="panel-body">
+          % foreach (@{$access->{editor}}) {
+            <div class="clearfix">
+              <div class="pull-left">
+                <a href="<%= url_for("/domain/$_->{id}/record") %>"><%= ($_->{name} =~/xn--.+/i)?domain_to_unicode($_->{name}):$_->{name} %></a>
+              </div>
+              <div class="pull-right">
+                <a href="<%= url_for("/domain/$_->{id}/record") %>" class="btn btn-default">domain records</a>
+                <a href="<%= url_for("/domain/$_->{id}/history") %>" class="btn btn-default">domain history</a>
+              </div>
+            </div>
+          % }
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
