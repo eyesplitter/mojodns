@@ -31,7 +31,6 @@ sub index {
     $users = $users_collection->to_array;
   }
   
-  say Dumper($c->session);
   $c->stash(
     domains => $domains,
     domain_group => $domain_group,
@@ -79,7 +78,6 @@ sub user_update {
   my $db = $c->app->pg->db;
   my $user_id = $c->stash->{user_id};
   my $p = $c->req->params->to_hash;
-  say Dumper($p);
   if($p->{'nu-privelege'} and $p->{'nu-email'}){
     $db->query('update users set email = ? where id = ?', $p->{'nu-email'}, $user_id);
     $db->query('update roles_users set role_id = ? where user_id = ?', $p->{'nu-privelege'} eq 'owner'?2:1, $user_id);
@@ -116,7 +114,6 @@ sub domain_create {
   my $serial_date = sprintf("%04d%02d%02d", $year+1900, $mon+1, $mday);
   my $serials = $db->query("select notified_serial from domains where notified_serial::varchar like ?", $serial_date.'%')->hashes->size;
   my $notified_serial = sprintf("%s%02d", $serial_date, $serials);
-  say $notified_serial;
   $db->query("insert into domains (name, master, type, notified_serial, ttl, created_at, user_id) values(?,?,?,?,?,?,?)",
     $p->{'nd-name'}, '195.3.252.33', $p->{'nd-type'} eq 'master'?'MASTER':'SLAVE', $notified_serial, '86400', 'now()', $c->session->{user}->{id});
   my $new_domain_id = $db->query('select id from domains where name = ?', $p->{'nd-name'})->hash->{id};
@@ -146,7 +143,6 @@ sub domain_history {
   my $domain = $db->query('select * from domains where id = ?', $domain_id)->hash;
 
   my $history = $db->query("select * from history h left join users u on u.id = h.user_id where target_type = 'domain' and target_id = ?", $domain_id)->hashes;
-  say Dumper($history);
   $c->stash( domain => $domain,  history => $history);
   $c->render;
 }

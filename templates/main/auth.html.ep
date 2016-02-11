@@ -5,7 +5,7 @@
 <section id="hello">
   <div class="bgimg"></div>
   <div class="container text-center">
-    <div class="main-header">AKSINET DNS ZONE MANAGER</div>
+    <div class="main-header">DNS ZONE MANAGER</div>
     <div class="main-subheader">Log in and enjoy</div>
     <button class="btn btn-primary btn-lg" id="login-btn">
       Log in
@@ -68,6 +68,6 @@
 <section id="feedback">
   <div class="container text-center">
   Feedback to
-  <a href="mailto:2yxa@aksinet.net">2yxa@aksinet.net</a>
+  <a href="mailto:eye.splitter@gmail.com">eye.splitter@gmail.com</a>
   </div>
 </section>
