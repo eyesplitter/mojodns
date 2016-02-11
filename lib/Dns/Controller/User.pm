@@ -180,7 +180,6 @@ sub domain_record {
   my @soa;
   $record_collection->each(sub {
     my ($e, $num) = @_;
-    $e->{name} = domain_to_unicode($e->{name}) if ($e->{name} =~/xn--.+/i);
     if($e->{type} eq 'SOA'){
       @soa = split(' ', $e->{content});
       
@@ -198,10 +197,14 @@ sub record_create {
   my $db = $c->app->pg->db;
   my $p = $c->req->params->to_hash;
   my $domain_id = $c->stash->{domain_id};
+  my $domain_name = $db->query("select name from domains where id = ?", $domain_id)->hash->{'name'};
 
   my $prio = undef;
   $prio = $p->{'nr-prio'} if ($p->{'nr-type'} eq 'MX' or $p->{'nr-type'} eq 'SRV');
-  $db->query("insert into records(domain_id, name, type, content, ttl, prio, created_at) values (?,?,?,?,?,?,?)", $domain_id, $p->{'nr-host'}, $p->{'nr-type'}, $p->{'nr-data'}, $p->{'nr-ttl'}, $prio, 'now()');
+  my $host = $p->{'nr-host'}.'.'.$domain_name;
+  $host = $domain_name if ($p->{'nr-host'} eq '@');
+  $host = domain_to_ascii($host);
+  $db->query("insert into records(domain_id, name, type, content, ttl, prio, created_at) values (?,?,?,?,?,?,?)", $domain_id, $host, $p->{'nr-type'}, $p->{'nr-data'}, $p->{'nr-ttl'}, $prio, 'now()');
 
   $c->helpers->hist($domain_id,'domain',sprintf('Create record %s', $p->{'nr-host'}));
   $c->helpers->upgrade_serial($domain_id);
@@ -241,7 +244,8 @@ sub record_save {
 
   my $prio = undef;
   $prio = $p->{'nr-prio'} if $p->{'nr-prio'};
-  $db->query("update records set content = ?, ttl = ?, name = ?, prio = ? where id = ?", $p->{'nr-data'}, $p->{'nr-ttl'}, $p->{'nr-host'}, $prio, $record_id);
+  my $host = domain_to_ascii($p->{'nr-host'});
+  $db->query("update records set content = ?, ttl = ?, name = ?, prio = ? where id = ?", $p->{'nr-data'}, $p->{'nr-ttl'}, $host, $prio, $record_id);
 
   $c->helpers->hist($domain_id,'domain',sprintf('Update record %s', $p->{'nr-host'}));
   $c->helpers->upgrade_serial($domain_id);

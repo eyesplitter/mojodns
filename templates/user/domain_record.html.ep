@@ -1,11 +1,12 @@
 % layout 'user';
-% title "$domain->{name} record";
+% my $unicode_domain_name = to_unicode($domain->{name});
+% title "$unicode_domain_name record";
 
 <div class="container footer-fix">
   <div class="page-header">
     <div class="row">
     	<div class="col-md-9">
-        <h3>Domain <small><%= $domain->{name} %></small></h3>
+        <h3>Domain <small><%= $unicode_domain_name %></small></h3>
       </div>
     	<div class="col-md-3">
         <a href="<%= url_for("/dns#s-domain-list-$domain->{id}") %>" class="btn btn-default btn-lg btn-block">
@@ -98,7 +99,7 @@
         % my $r_id = $_->{id};
         <tr>
           <td>
-            <%= $_->{name} %>
+            <%= rename($_->{name}, $domain->{name}) %>
           </td>
           <td>
             <%= $_->{type} %>
@@ -149,7 +150,12 @@
 
           <div class="form-group">
             <label for="nr-host">Host</label>
-            <input type="text" id="nr-host" name="nr-host" class="form-control" placeholder="Host">
+            <input type="text" id="nr-host" name="nr-host" class="form-control" placeholder="Host without postfix <%= $unicode_domain_name %>"
+              data-bv-notempty="true" data-bv-notempty-message="This field is required"
+              data-bv-regexp="true"
+              data-bv-regexp-regexp="^((?!<%= $unicode_domain_name %>).)*$"
+              data-bv-regexp-message="Don't type <%= $unicode_domain_name %> leave @ instead"
+            >
           </div>       
 
           <div class="form-group">
